@@ -37,7 +37,6 @@ class TrainOREvaluate(object):
         args = parser.parse_args(sys.argv[2:])
         print(args)
 
-        # TODO: Implement training loop here
         model = MyAwesomeModel()
         criterion = nn.NLLLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -48,9 +47,12 @@ class TrainOREvaluate(object):
         steps = 0
         print_every = 200
         running_loss = 0
+        epoch_losses = []
+        epoch_loss = 0
 
         for epoch in range(args.num_epochs):
             for images, labels in trainloader:
+                # Increment counter and zero gradients
                 steps += 1
                 optimizer.zero_grad()
 
@@ -59,36 +61,41 @@ class TrainOREvaluate(object):
                 loss = criterion(logits, labels)
                 loss.backward()
                 optimizer.step()
+
+                # Save and print losses
                 train_losses += [loss.item()]
                 running_loss += loss.item()
+                epoch_loss += loss.item()
                 if steps % print_every == 0:
                     print(f'[Epoch {epoch}/{args.num_epochs}]:')
                     print(f'Training loss: {running_loss/print_every:.3f}')
                     running_loss = 0
 
-        torch.save(model.state_dict(), 'checkpoint_noskip.pth')
+            epoch_losses += [epoch_loss]
+            epoch_loss = 0
 
+        # Save final model
+        torch.save(model.state_dict(), '/home/peterg/drive/DTU/10. semester/MLOps/dtu_mlops/01_introduction/final_exercise/checkpoint.pth')
 
-        fig, ax = plt.subplots(figsize=(8,4))
-        ax.plot(np.arange(1,steps+1), train_losses, label='Training losses (per batch)')
-        #ax.plot(np.arange(len(all_losses)), all_losses, label='Training losses (per datum)')
-        #ax.set_xticks(np.arange(1,args.num_epochs+1))
-        plt.legend()
-        plt.show()
-
-
-
+        # Plot resulting training losses
+        fig, ax = plt.subplots(1, 2, figsize=(10,4))
+        ax[0].plot(np.arange(1, steps+1), train_losses, label='Training losses (per batch)')
+        ax[1].plot(np.arange(1, len(epoch_losses)+1), epoch_losses, label='Training losses (per epoch)',
+                   color="#F58A00")
+        ax[0].legend()
+        ax[1].legend()
+        plt.tight_layout()
+        plt.savefig('/home/peterg/drive/DTU/10. semester/MLOps/dtu_mlops/01_introduction/final_exercise/01_final_exercise_training_losses.png')
 
 
     def evaluate(self):
         print("Evaluating until hitting the ceiling")
         parser = argparse.ArgumentParser(description='Training arguments')
-        parser.add_argument('--load_model_from', default="checkpoint_noskip.pth")
+        parser.add_argument('--load_model_from', default="/home/peterg/drive/DTU/10. semester/MLOps/dtu_mlops/01_introduction/final_exercise/checkpoint.pth")
         # add any additional argument that you want
         args = parser.parse_args(sys.argv[2:])
         print(args)
-        
-        # TODO: Implement evaluation logic here
+
         if args.load_model_from:
             state_dict = torch.load(args.load_model_from)
             model = MyAwesomeModel()
@@ -100,6 +107,7 @@ class TrainOREvaluate(object):
         testloader = torch.utils.data.DataLoader(test_set, batch_size=64, shuffle=True)
         accuracy = 0
         test_loss = 0
+
         for images, labels in testloader:
             output = model(images)
             test_loss += criterion(output, labels).item()
@@ -107,7 +115,7 @@ class TrainOREvaluate(object):
             equality = (labels.data == ps.max(1)[1])
             accuracy += equality.type_as(torch.FloatTensor()).mean()
 
-        print(accuracy/len(testloader))
+        print(f"Accuracy on test set: {accuracy/len(testloader):.4f}")
 
 if __name__ == '__main__':
     TrainOREvaluate()
