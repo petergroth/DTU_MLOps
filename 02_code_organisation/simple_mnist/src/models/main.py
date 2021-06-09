@@ -1,13 +1,14 @@
-import sys
 import argparse
+import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch import nn
+
 from model import MyAwesomeModel
-import matplotlib.pyplot as plt
 from util import mnist
-from torchvision import datasets
+
 plt.style.use('seaborn-dark')
 
 class TrainOREvaluate(object):

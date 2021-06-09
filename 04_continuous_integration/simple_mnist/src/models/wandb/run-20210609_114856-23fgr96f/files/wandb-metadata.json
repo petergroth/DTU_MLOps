@@ -1,0 +1,27 @@
+{
+    "os": "Linux-5.4.118-1-MANJARO-x86_64-with-glibc2.10",
+    "python": "3.8.10",
+    "heartbeatAt": "2021-06-09T09:48:58.982981",
+    "startedAt": "2021-06-09T09:48:56.724653",
+    "docker": null,
+    "gpu": "GeForce GTX 960M",
+    "gpu_count": 1,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "train",
+        "--num_epochs=1"
+    ],
+    "state": "running",
+    "program": "/home/peterg/drive/DTU/10. semester/MLOps/repo/04_continuous_integration/simple_mnist/src/models/main.py",
+    "codePath": "04_continuous_integration/simple_mnist/src/models/main.py",
+    "git": {
+        "remote": "https://github.com/petergroth/DTU_MLOps",
+        "commit": "4c136c53f67bfac2e50289178d339b5aacda2be7"
+    },
+    "email": "petermoerchgroth@gmail.com",
+    "root": "/home/peterg/drive/DTU/10. semester/MLOps/repo",
+    "host": "pmgmanjaro",
+    "username": "peterg",
+    "executable": "/home/peterg/miniconda3/envs/thesis/bin/python"
+}
