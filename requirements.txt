@@ -65,14 +65,15 @@ shortuuid==1.0.1
 six==1.16.0
 sklearn==0.0
 smmap==4.0.0
+-e git+https://github.com/petergroth/DTU_MLOps@3ece1397eb2d7b12f82fb9bc16e751628de0cdcf#egg=src
 subprocess32==3.5.4
 sympy==1.6.2
 text-unidecode==1.3
 threadpoolctl==2.1.0
 toml==0.10.2
-torch==1.8.1
+torch==1.8.1+cu111
 torchaudio==0.8.1
-torchvision==0.9.1
+torchvision==0.9.1+cu111
 traitlets==5.0.5
 typing-extensions==3.10.0.0
 urllib3==1.26.5
