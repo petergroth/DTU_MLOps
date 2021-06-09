@@ -35,7 +35,7 @@ class TrainOREvaluate(object):
             self.weights = getattr(self, args.command)(single_step=True)
         else:
             getattr(self, args.command)()
-    
+
     def train(self, single_step=False):
         print("Training day and night")
         parser = argparse.ArgumentParser(description='Training arguments')
@@ -103,7 +103,6 @@ class TrainOREvaluate(object):
                 if steps % print_every == 0:
                     wandb.log({"loss": loss})
                     running_loss = 0
-
 
 
             epoch_losses += [epoch_loss]

@@ -4,9 +4,9 @@ import torch
 from src.models.main import TrainOREvaluate
 from src.models.model import MyAwesomeModel
 
+
 def test_weight_change():
     init_weights, step_weights = TrainOREvaluate(single_step=True).weights
-
     assert not torch.all(torch.eq(init_weights, step_weights))
 
 
