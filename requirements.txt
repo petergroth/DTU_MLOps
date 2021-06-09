@@ -65,7 +65,7 @@ shortuuid==1.0.1
 six==1.16.0
 sklearn==0.0
 smmap==4.0.0
--e git+https://github.com/petergroth/DTU_MLOps@933cf2b2bd7993b9bc5026be6c7e2ec679a103a4#egg=src
+-e git+https://github.com/petergroth/DTU_MLOps@9d8affaa3b8bdf15731e84494967dc5e759e298b#egg=src
 subprocess32==3.5.4
 sympy==1.6.2
 text-unidecode==1.3
