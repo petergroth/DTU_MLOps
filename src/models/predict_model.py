@@ -5,7 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 import torch
 
-from model import MyAwesomeModel
+from src.models.model import MyAwesomeModel
 
 plt.style.use('seaborn-dark')
 
