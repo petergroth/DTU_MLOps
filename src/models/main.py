@@ -6,8 +6,8 @@ import torch
 import wandb
 from torch import nn
 
-from models.model import MyAwesomeModel
-from models.util import mnist
+from src.models.model import MyAwesomeModel
+from src.models.util import mnist
 
 plt.style.use('seaborn-dark')
 

@@ -1,7 +1,7 @@
 import torch
 import pytest
 
-from models.model import MyAwesomeModel
+from src.models.model import MyAwesomeModel
 
 @pytest.mark.parametrize("num_filter", [1, 10, 15])
 def test_output_size(num_filter):

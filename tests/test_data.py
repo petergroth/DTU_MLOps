@@ -1,4 +1,4 @@
-from models.util import mnist
+from src.models.util import mnist
 import torch
 
 def test_number_of_datapoints():

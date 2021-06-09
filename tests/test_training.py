@@ -1,8 +1,8 @@
 
 import pytest
 import torch
-from models.main import TrainOREvaluate
-from models.model import MyAwesomeModel
+from src.models.main import TrainOREvaluate
+from src.models.model import MyAwesomeModel
 
 def test_weight_change():
     init_weights, step_weights = TrainOREvaluate(single_step=True).weights
