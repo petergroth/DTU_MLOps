@@ -76,6 +76,7 @@ class Classifier(pl.LightningModule):
         return self.model(x)
 
     def predict_step(self, batch, batch_idx = None):
+        print('Predicting...')
         x = torch.from_numpy(batch)
         x = x.type(torch.FloatTensor)
         outputs = self.model(x)

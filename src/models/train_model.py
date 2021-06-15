@@ -2,6 +2,7 @@ import argparse
 import sys
 
 import joblib
+import numpy as np
 import os
 import pytorch_lightning as pl
 import torch
@@ -180,17 +181,15 @@ if __name__ == "__main__":
     )
 
     model = Classifier(model=img_model, lr=args.lr)
-    # attrs = vars(model)
-    # print(', '.join("%s: %s" % item for item in attrs.items()))
-    # print(dir(model))
-    # assert getattr(model, 'infer', None) != None
 
     print('making prediction...')
     img = torch.rand(10, 1, 28, 28)
     img = img.tolist()
     input_json = json.dumps({"data": img})
     headers = {'Content-Type': 'application/json'}
-    mtp = model.predict_step(img)
+    data = np.array(json.loads(input_json)['data'])
+    mtp = model.predict_step(data, None)
+    print('prediction:')
     print(mtp)
     assert getattr(model, 'infer', None) != None
 
