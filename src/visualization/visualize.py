@@ -1,14 +1,16 @@
-import sys
 import argparse
-import torch
-import pandas as pd
+import sys
+
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
+import torch
+import torch.nn.functional as F
 from sklearn.manifold import TSNE
+
 from models.model import MyAwesomeModel
 from models.util import mnist
-import matplotlib.pyplot as plt
-import seaborn as sns
-import torch.nn.functional as F
 
 sns.set()
 np.random.seed(1)

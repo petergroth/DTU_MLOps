@@ -1,12 +1,8 @@
 import pytorch_lightning as pl
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 import torchmetrics
 import torchvision.transforms as transforms
-import wandb
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers import WandbLogger
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets
 from torchvision.datasets import MNIST
@@ -15,15 +11,22 @@ from torchvision.datasets import MNIST
 def mnist():
     # Convert to tensors and normalise
 
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (0.5,)),
-                                    ])
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize((0.5,), (0.5,)),
+        ]
+    )
 
     # Download and load the train data
-    trainset = datasets.MNIST('data/processed/MNIST_data/', download=True, train=True, transform=transform)
+    trainset = datasets.MNIST(
+        "data/processed/MNIST_data/", download=True, train=True, transform=transform
+    )
 
     # Download and load the test data
-    testset = datasets.MNIST('data/processed/MNIST_data/', download=True, train=False, transform=transform)
+    testset = datasets.MNIST(
+        "data/processed/MNIST_data/", download=True, train=False, transform=transform
+    )
 
     return trainset, testset
 
@@ -72,6 +75,14 @@ class Classifier(pl.LightningModule):
     def forward(self, x: torch.Tensor):
         return self.model(x)
 
+    def predict_step(self, batch, batch_idx = None):
+        x = torch.from_numpy(batch)
+        x = x.type(torch.FloatTensor)
+        outputs = self.model(x)
+        ps = F.softmax(outputs, dim=-1)
+        ps = ps.max(1)[1]
+        ps = ps.numpy()
+        return ps
 
 class MNISTData(pl.LightningDataModule):
     def __init__(self, batch_size: int = 64):
@@ -97,4 +108,3 @@ class MNISTData(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(self.mnist_test, batch_size=self.batch_size, num_workers=4)
-

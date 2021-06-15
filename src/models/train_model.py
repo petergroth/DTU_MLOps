@@ -1,7 +1,8 @@
 import argparse
 import sys
 
-import matplotlib.pyplot as plt
+import joblib
+import os
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -10,7 +11,7 @@ import torchmetrics
 import torchvision.transforms as transforms
 import wandb
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.loggers import WandbLogger, MLFlowLogger
 from src.models.model import MNIST_CNN
 from src.util import Classifier, MNISTData
 from torch import nn
@@ -145,7 +146,7 @@ class TrainOREvaluate(object):
             equality = labels.data == ps.max(1)[1]
             accuracy += equality.type_as(torch.FloatTensor()).mean()
 
-        print(f"Accuracy on test set: {accuracy/len(testloader):.4f}")
+        print(f"Accuracy on test set: {accuracy / len(testloader):.4f}")
 
 
 def parse_arguments():
@@ -158,8 +159,11 @@ def parse_arguments():
     parser.add_argument("--hidden_size2", default=128, type=int)
     parser.add_argument("--kernel_size", default=3, type=int)
     parser.add_argument("--dropout", default=0.25, type=float)
+    parser.add_argument("-azure", action='store_true')
     # add any additional argument that you want
     args = parser.parse_args()
+    if args.azure:
+        print('Running on Azure.')
     return args
 
 
@@ -174,7 +178,22 @@ if __name__ == "__main__":
         kernel_size=args.kernel_size,
         dropout=args.dropout,
     )
+
     model = Classifier(model=img_model, lr=args.lr)
+    # attrs = vars(model)
+    # print(', '.join("%s: %s" % item for item in attrs.items()))
+    # print(dir(model))
+    # assert getattr(model, 'infer', None) != None
+
+    print('making prediction...')
+    img = torch.rand(10, 1, 28, 28)
+    img = img.tolist()
+    input_json = json.dumps({"data": img})
+    headers = {'Content-Type': 'application/json'}
+    mtp = model.predict_step(img)
+    print(mtp)
+    assert getattr(model, 'infer', None) != None
+
     logger = WandbLogger(project="MNIST", log_model="all", config=args)
 
     # Setup early stopping
@@ -203,6 +222,12 @@ if __name__ == "__main__":
 
     # Test models
     result = trainer.test()
+
+    if args.azure:
+        model_file = 'outputs/mnist_model.pkl'
+        os.makedirs('outputs', exist_ok=True)
+        joblib.dump(value=model, filename=model_file)
+        print(f'Saving model under {model_file}.')
 
     # Terminate logger
     wandb.finish()

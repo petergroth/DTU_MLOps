@@ -1,15 +1,19 @@
-from src.models.util import mnist
 import torch
+
+from src.models.util import mnist
+
 
 def test_number_of_datapoints():
     train, test = mnist()
     assert len(train) == 60000
     assert len(test) == 10000
 
+
 def test_dimensions():
     train, test = mnist()
     assert list(train.data.shape)[1:] == [28, 28]
     assert list(test.data.shape)[1:] == [28, 28]
+
 
 def test_all_labels():
     train, test = mnist()

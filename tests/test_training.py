@@ -1,6 +1,6 @@
-
 import pytest
 import torch
+
 from src.models.main import TrainOREvaluate
 from src.models.model import MyAwesomeModel
 

@@ -1,13 +1,6 @@
 import pytorch_lightning as pl
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchmetrics
-import torchvision.transforms as transforms
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers import WandbLogger
-from torch.utils.data import DataLoader, random_split
-from torchvision.datasets import FashionMNIST
 
 
 class MyAwesomeModel(nn.Module):
@@ -72,7 +65,9 @@ class MNIST_CNN(pl.LightningModule):
         self.dropout = dropout
 
         self.layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=self.kernel_size, padding=1),
+            nn.Conv2d(
+                in_channels=1, out_channels=32, kernel_size=self.kernel_size, padding=1
+            ),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
@@ -87,8 +82,12 @@ class MNIST_CNN(pl.LightningModule):
 
         self.fc1 = nn.Linear(in_features=64 * 6 * 6, out_features=self.hidden_size1)
         self.drop = nn.Dropout2d(self.dropout)
-        self.fc2 = nn.Linear(in_features=self.hidden_size1, out_features=self.hidden_size2)
-        self.fc3 = nn.Linear(in_features=self.hidden_size2, out_features=self.num_classes)
+        self.fc2 = nn.Linear(
+            in_features=self.hidden_size1, out_features=self.hidden_size2
+        )
+        self.fc3 = nn.Linear(
+            in_features=self.hidden_size2, out_features=self.num_classes
+        )
 
     def forward(self, x):
         out = self.layer1(x)
@@ -100,5 +99,3 @@ class MNIST_CNN(pl.LightningModule):
         out = self.fc3(out)
 
         return out
-
-

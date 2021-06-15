@@ -3,30 +3,32 @@ import sys
 
 import matplotlib.pyplot as plt
 import torch
-import wandb
 from torch import nn
 
+import wandb
 from src.models.model import MyAwesomeModel
 from src.models.util import mnist
 
-plt.style.use('seaborn-dark')
+plt.style.use("seaborn-dark")
+
 
 class TrainOREvaluate(object):
-    """ Helper class that will help launch class methods as commands
-        from a single script
+    """Helper class that will help launch class methods as commands
+    from a single script
     """
+
     def __init__(self, single_step=False):
         parser = argparse.ArgumentParser(
             description="Script for either training or evaluating",
-            usage="python main.py <command>"
+            usage="python main.py <command>",
         )
         parser.add_argument("command", help="Subcommand to run")
         args = parser.parse_args(sys.argv[1:2])
         if single_step:
-            args.command = 'train'
+            args.command = "train"
 
         if not hasattr(self, args.command):
-            print('Unrecognized command')
+            print("Unrecognized command")
 
             parser.print_help()
             exit(1)
@@ -38,10 +40,10 @@ class TrainOREvaluate(object):
 
     def train(self, single_step=False):
         print("Training day and night")
-        parser = argparse.ArgumentParser(description='Training arguments')
-        parser.add_argument('--lr', default=3e-4, type=float)
-        parser.add_argument('--num_epochs', default=10, type=int)
-        parser.add_argument('--num_filters', default=16, type=int)
+        parser = argparse.ArgumentParser(description="Training arguments")
+        parser.add_argument("--lr", default=3e-4, type=float)
+        parser.add_argument("--num_epochs", default=10, type=int)
+        parser.add_argument("--num_filters", default=16, type=int)
         # add any additional argument that you want
         args = parser.parse_args(sys.argv[2:])
         print(args)
@@ -53,7 +55,9 @@ class TrainOREvaluate(object):
 
         # Load data
         train_set, _ = mnist()
-        trainloader = torch.utils.data.DataLoader(train_set, batch_size=64, shuffle=True)
+        trainloader = torch.utils.data.DataLoader(
+            train_set, batch_size=64, shuffle=True
+        )
 
         # Prepare metrics
         train_losses = []
@@ -67,7 +71,7 @@ class TrainOREvaluate(object):
         if not single_step:
             wandb.init(config=vars(args))
         else:
-            wandb.init(config=vars(args), mode='disabled')
+            wandb.init(config=vars(args), mode="disabled")
             init_weights = model.conv1.weight.clone().detach()
 
         wandb.watch(model, log_freq=print_every)
@@ -98,36 +102,31 @@ class TrainOREvaluate(object):
                 if single_step:
                     return init_weights, model.conv1.weight
 
-
                 # Print loss
                 if steps % print_every == 0:
                     wandb.log({"loss": loss})
                     running_loss = 0
-
 
             epoch_losses += [epoch_loss]
             wandb.log({"epoch_loss": epoch_loss})
             epoch_loss = 0
 
             # Plot resulting training losses
-            #fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-            #ax[0].plot(np.arange(1, steps + 1), train_losses, label='Training losses (per batch)')
-            #ax[1].plot(np.arange(1, len(epoch_losses) + 1), epoch_losses, label='Training losses (per epoch)',
+            # fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+            # ax[0].plot(np.arange(1, steps + 1), train_losses, label='Training losses (per batch)')
+            # ax[1].plot(np.arange(1, len(epoch_losses) + 1), epoch_losses, label='Training losses (per epoch)',
             #           color="#F58A00")
-            #ax[0].legend()
-            #ax[1].legend()
-            #wandb.log({"Losses": wandb.Image(plt)})
-
-
+            # ax[0].legend()
+            # ax[1].legend()
+            # wandb.log({"Losses": wandb.Image(plt)})
 
         # Save final model
-        #torch.save(model.state_dict(), 'models/checkpoint.pth')
-
+        # torch.save(model.state_dict(), 'models/checkpoint.pth')
 
     def evaluate(self):
         print("Evaluating until hitting the ceiling")
-        parser = argparse.ArgumentParser(description='Training arguments')
-        parser.add_argument('--load_model_from', default="models/checkpoint.pth")
+        parser = argparse.ArgumentParser(description="Training arguments")
+        parser.add_argument("--load_model_from", default="models/checkpoint.pth")
         # add any additional argument that you want
         args = parser.parse_args(sys.argv[2:])
         print(args)
@@ -148,12 +147,11 @@ class TrainOREvaluate(object):
             output = model(images.view(-1, 1, 28, 28))
             test_loss += criterion(output, labels).item()
             ps = torch.exp(output)
-            equality = (labels.data == ps.max(1)[1])
+            equality = labels.data == ps.max(1)[1]
             accuracy += equality.type_as(torch.FloatTensor()).mean()
 
         print(f"Accuracy on test set: {accuracy/len(testloader):.4f}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     TrainOREvaluate()
-
-
