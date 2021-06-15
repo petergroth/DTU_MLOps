@@ -1,36 +1,50 @@
 
+import pytorch_lightning as pl
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchmetrics
+import torchvision.transforms as transforms
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from pytorch_lightning.loggers import WandbLogger
+from torch.utils.data import DataLoader, random_split
+from torchvision.datasets import FashionMNIST
 import argparse
 import sys
-
-import matplotlib.pyplot as plt
-import torch
-
 from src.models.model import MyAwesomeModel
+import wandb
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from pytorch_lightning.loggers import WandbLogger
+from src.models.model import MNIST_CNN
+from src.util import Classifier, MNISTData
+from torch import nn
+from torch.utils.data import DataLoader, random_split
+from torchvision import datasets, transforms
+from torchvision.datasets import FashionMNIST
 
-plt.style.use('seaborn-dark')
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Prediction arguments')
+    parser.add_argument('--model_path', default="models/checkpoint.pth")
+    parser.add_argument('--image_folder', default=None)
+    parser.add_argument('--pickle_file', default=None)
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Prediction arguments')
-    parser.add_argument('--load_model_from', default="models/checkpoint.pth")
-    parser.add_argument('--image_folder', default=None)
-    parser.add_argument('--pickle_file', default=None)
-    args = parser.parse_args(sys.argv[2:])
+    args = parse_arguments()
 
-    #if args.image_folder is not None:
-    # Load images
-    # TODO: Add loop to loads and transforms images
-    images = torch.rand(10, 28, 28)
+    # Random images
+    images = torch.rand(10, 1, 28, 28)
 
     # Load model
-    state_dict = torch.load(args.load_model_from)
-    model = MyAwesomeModel()
-    model.load_state_dict(state_dict)
-    model.eval()
+    classifier = Classifier.load_from_checkpoint(args.model_path)
+    classifier.eval()
 
     # Make predictions
-    outputs = model(images)
-    ps = torch.exp(outputs)
+    outputs = classifier.model(images)
+    ps = F.softmax(outputs, dim=-1)
     predictions = ps.max(1)[1]
     print(list(predictions.numpy()))
 

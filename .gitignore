@@ -132,4 +132,6 @@ dmypy.json
 01_introduction/
 02_code_organisation/
 03_debugging_and_visualization/
-04_continuous_integration/coverage
+04_continuous_integration/
+coverage/
+wandb/
