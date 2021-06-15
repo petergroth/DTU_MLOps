@@ -106,7 +106,7 @@ sphinxcontrib-htmlhelp==2.0.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
--e git+https://github.com/petergroth/DTU_MLOps@43406dee7abb82815709a8dc00ac2cdf7c583eca#egg=src
+-e git+https://github.com/petergroth/DTU_MLOps@3cabbc17f7e9f92f7475e5ada9d465bbe5e320cc#egg=src
 subprocess32==3.5.4
 sympy==1.6.2
 tensorboard==2.4.1
