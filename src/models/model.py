@@ -1,7 +1,6 @@
-import pytorch_lightning as pl
-import torch.nn as nn
 import torch.nn.functional as F
-
+import torch.nn as nn
+import pytorch_lightning as pl
 
 class MyAwesomeModel(nn.Module):
     def __init__(self, num_filter=16):
